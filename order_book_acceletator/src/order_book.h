@@ -22,7 +22,6 @@ public:
               Books asks_)
             : exchange(std::move(exchange_)), symbol(std::move(symbol_)),
               bids(std::move(bids_)), asks(std::move(asks_)),
-              cum_bids(0), cum_asks(0),
               exchange_ts(0), local_ts(0), initialized(false) {}
 
     explicit OrderBook(const OrderBookSnapshot &d);
@@ -88,7 +87,7 @@ public:
         std::tie(cum_bids, cum_asks) = CumulativeLevels(levels_);
     }
 
-    std::pair<float, float> CumulativeLevels(size_t levels_ = 0) const;
+    std::pair<std::vector<float>, std::vector<float>> CumulativeLevels(size_t levels_ = 0) const;
 
     void ApplyUpdate(const OrderBookUpdate &updates);
 
@@ -106,8 +105,8 @@ private:
     std::string symbol;
     Books bids;
     Books asks;
-    float cum_bids;
-    float cum_asks;
+    std::vector<float> cum_bids;
+    std::vector<float> cum_asks;
     Timestamp exchange_ts;
     Timestamp local_ts;
     bool initialized;

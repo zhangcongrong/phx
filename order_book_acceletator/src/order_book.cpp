@@ -7,7 +7,6 @@
 OrderBook::OrderBook(const OrderBookSnapshot &d)
         : exchange(d.GetExchange()), symbol(d.GetSymbol()),
           bids{d.bids}, asks{d.asks},
-          cum_bids(0), cum_asks(0),
           exchange_ts(d.GetExchangeTs()), local_ts(d.GetLocalTs()), initialized(false) {}
 
 void OrderBook::ApplyUpdate(const OrderBookUpdate &updates) {
@@ -81,17 +80,21 @@ std::pair<LevelBooks, LevelBooks> OrderBook::levels(size_t levels_) const {
     return std::make_pair(bid_levels, ask_levels);
 }
 
-std::pair<float, float> OrderBook::CumulativeLevels(size_t levels_) const {
+std::pair<std::vector<float>, std::vector<float>> OrderBook::CumulativeLevels(size_t levels_) const {
     auto [bids_, asks_] = levels(levels_);
-    float sum_b = 0;
-    float sum_a = 0;
+    std::vector<float> sum_b;
+    std::vector<float> sum_a;
+    float sum = 0;
 
     for (auto &i: bids_) {
-        sum_b += i.second;
+        sum += i.second;
+        sum_a.emplace_back(sum);
     }
 
+    sum = 0;
     for (auto &i: asks_) {
-        sum_a += i.second;
+        sum += i.second;
+        sum_b.emplace_back(sum);
     }
 
     return std::make_pair(sum_a, sum_b);

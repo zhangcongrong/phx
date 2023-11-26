@@ -5,9 +5,10 @@
 #include "order_book.h"
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
-
     // TODO(Leo): should use gtest to test.
+
+    std::cout << "-----------------test 1 start----------------------" << std::endl;
+
     std::string exchange = "binance";
     std::string symbol = "BTCUSDT";
     Books bids = {{37565.7, 171.834},
@@ -53,7 +54,7 @@ int main() {
     auto duration = std::chrono::system_clock::now().time_since_epoch();;
     Timestamp local_ts = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();;
     Timestamp exchange_ts = local_ts - 50;
-    std::cout << "current timestamp:" << local_ts << std::endl;
+    std::cout << "current timestamp: " << local_ts << std::endl;
 
     auto order_book = OrderBook(exchange, symbol, Books(), Books());
     std::cout << "order book status: " << order_book.IsValid() << std::endl;
@@ -61,12 +62,16 @@ int main() {
     std::cout << "order book status: " << order_book.IsValid() << std::endl;
     order_book.SetTimestamp(exchange_ts, local_ts);
 
-    float cum_bids, cum_asks;
+    std::vector<float> cum_bids;
+    std::vector<float> cum_asks;
     std::tie(cum_bids, cum_asks) = order_book.CumulativeLevels(10);
-    std::cout << "cum_bids: " << cum_bids << "; cum_asks: " << cum_asks << std::endl;
+    std::cout << "cum_bids len: " << cum_bids.size() << "; last value: " << *cum_bids.rbegin() << std::endl;
+    std::cout << "cum_asks len: " << cum_asks.size() << "; last value: " << *cum_asks.rbegin() << std::endl;
 
+    std::cout << "-----------------test 1 end----------------------\n\n" << std::endl;
+
+    std::cout << "-----------------test 2 start----------------------" << std::endl;
     Ticker ticker_ = {"binance", "BTCUSDT"};
-
     auto ticker = order_book.Key();
     Books new_bids = {{37565.5, 173.215},
                       {37565.1, 2.3},
@@ -87,8 +92,7 @@ int main() {
                       {37546.2, 0.398},
                       {37543.2, 0.133},
                       {37542.3, 1.231},
-                      {37541.1, 1.11}
-    };
+                      {37541.1, 1.11}};
     Books new_asks = {{37582.2, 36.771},
                       {37583.7, 8.571},
                       {37585.2, 5.696},
@@ -112,8 +116,16 @@ int main() {
     auto order_book_snapshot = OrderBookSnapshot(ticker, exchange_ts, local_ts, bids, asks);
     auto new_order_book = OrderBook(order_book_snapshot);
     new_order_book.ApplySnapshot(new_bids, new_asks);
+
     std::tie(cum_bids, cum_asks) = new_order_book.CumulativeLevels(10);
-    std::cout << "new cum_bids: " << cum_bids << "; new cum_asks: " << cum_asks << std::endl;
+    std::cout << "new cum_bids len: " << cum_bids.size() << "; last value: " << *cum_bids.rbegin() << std::endl;
+    std::cout << "new cum_asks len: " << cum_asks.size() << "; last value: " << *cum_asks.rbegin() << std::endl;
+
+    for (auto &item: new_bids) {
+        std::cout << "first: " << item.first << " second: " << item.second << std::endl;
+    }
+    std::cout << "-----------------test 2 end----------------------\n\n" << std::endl;
+
 
     return 0;
 }
