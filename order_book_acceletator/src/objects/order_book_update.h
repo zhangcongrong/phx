@@ -33,6 +33,7 @@ public:
             asks{d.asks} {}
 
     inline std::string ToString() const {
+        // TODO(Leo): not fully formatted.
         std::stringstream stream;
         stream << "OrderBookUpdate((" << ticker.first << ", " << ticker.second << ")"
                << "[" << timestamp << "|" << local_timestamp << "] : "
