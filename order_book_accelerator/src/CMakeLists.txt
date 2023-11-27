@@ -12,3 +12,7 @@ add_executable(order_book main.cpp
         objects/order_book_update.h
         order_book.h
         order_book.cpp)
+
+# build
+# cmake -S . -B build
+# cmake --build build

@@ -83,11 +83,11 @@ public:
         return !asks.empty() ? bids.begin()->first : 0.0f;
     }
 
+    std::pair<std::vector<float>, std::vector<float>> CumulativeLevels(size_t levels_ = 0) const;
+
     void UpdateCumulativeLevels(size_t levels_ = 0) {
         std::tie(cum_bids, cum_asks) = CumulativeLevels(levels_);
     }
-
-    std::pair<std::vector<float>, std::vector<float>> CumulativeLevels(size_t levels_ = 0) const;
 
     void ApplyUpdate(const OrderBookUpdate &updates);
 
